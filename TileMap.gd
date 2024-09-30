@@ -7,9 +7,10 @@ const IS_SOLID = "is_solid"
 
 # variable for grey-colored box to draw out path taken
 const PATH_TAKEN_ATLAS_COORDS = Vector2i(2, 0)
-
 # Variable for the size of the map rectangle
-const MAP_RECT = Rect2i(-3, -3, 8, 8)
+# const MAP_RECT = Rect2i(-3, -3, 8, 8)
+
+var current_id_path: Array[Vector2i]
 
 
 ## Called when the node enters the scene tree for the first time.
@@ -24,11 +25,11 @@ func setup_grid():
 	
 	# Rect2i -> Rectangle starting position in gamecamera (coordinate)
 	# & width/height of the rectangle, last two numbers (8x8) boxes
-	astar_grid.region = MAP_RECT
+	astar_grid.region = get_used_rect()
 	
 	# cell_size for tileMaps (coordinates), if you 
 	# wish to draw out something on an exact place on them
-	astar_grid.cell_size = Vector2i(64, 64)
+	# astar_grid.cell_size = Vector2i(64, 64)
 	
 	# Rule system for movement
 	# No diagonal movement
@@ -74,6 +75,18 @@ func _input(event):
 	).slice(1)
 	
 	print(id_path)
+	
+	if id_path.is_empty() == false:
+		current_id_path = id_path
+		
+		
+func _physics_process(delta):
+	if current_id_path.is_empty():
+		return
+		
+	var target_position = map_to_local(current_id_path.front())
+	
+	global_position = global_position.move_toward(target_position, 1)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
