@@ -1,14 +1,15 @@
 extends TileMap
 
-
 var astar_grid = AStarGrid2D.new()
-var PLAYER_CHAR = CharacterBody2D.new()
 const MAIN_LAYER = 0
 const MAIN_SOURCE = 0
 const IS_SOLID = "is_solid"
 
 # variable for grey-colored box to draw out path taken
 const PATH_TAKEN_ATLAS_COORDS = Vector2i(2, 0)
+
+# Variable for the size of the map rectangle
+const MAP_RECT = Rect2i(-3, -3, 8, 8)
 
 
 ## Called when the node enters the scene tree for the first time.
@@ -23,7 +24,7 @@ func setup_grid():
 	
 	# Rect2i -> Rectangle starting position in gamecamera (coordinate)
 	# & width/height of the rectangle, last two numbers (8x8) boxes
-	astar_grid.region = Rect2i(-3, -3, 8, 8)
+	astar_grid.region = MAP_RECT
 	
 	# cell_size for tileMaps (coordinates), if you 
 	# wish to draw out something on an exact place on them
@@ -63,6 +64,16 @@ func is_spot_solid(spot_to_check:Vector2i) -> bool:
 	return get_cell_tile_data(MAIN_LAYER, spot_to_check).get_custom_data(IS_SOLID)
 	
 	
+func _input(event):
+	if event.is_action_pressed("move_to") == false:
+		return
+	
+	var id_path = astar_grid.get_id_path(
+		local_to_map(global_position),
+		local_to_map(get_global_mouse_position())
+	).slice(1)
+	
+	print(id_path)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
