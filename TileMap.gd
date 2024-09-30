@@ -2,6 +2,7 @@ extends TileMap
 
 
 var astar_grid = AStarGrid2D.new()
+var PLAYER_CHAR = CharacterBody2D.new()
 const MAIN_LAYER = 0
 const MAIN_SOURCE = 0
 const IS_SOLID = "is_solid"
@@ -13,13 +14,14 @@ const PATH_TAKEN_ATLAS_COORDS = Vector2i(2, 0)
 ## Called when the node enters the scene tree for the first time.
 ## Runs everything
 func _ready():
+	
 	setup_grid()
 	show_path()
 
 ## Function for setting up the map grid coordinates
 func setup_grid():
 	
-	# Rect2i -> Rectangle starting position first two numbers (coordinate)
+	# Rect2i -> Rectangle starting position in gamecamera (coordinate)
 	# & width/height of the rectangle, last two numbers (8x8) boxes
 	astar_grid.region = Rect2i(-3, -3, 8, 8)
 	
@@ -46,6 +48,7 @@ func show_path():
 	# Coordinates of what cells path is taking
 	# From 0,0 -> 4,1
 	var path_taken = astar_grid.get_id_path(Vector2i(0,0), Vector2i(4, 1))
+	
 	
 	# For every cell that the path takes,
 	# Each tile gets colored, that of "var PATH_TAKEN_ATLAS_COORDS (brown)"
