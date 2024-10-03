@@ -18,6 +18,8 @@ var is_moving: bool
 var current_point_path: PackedVector2Array
 
 
+
+
 ## Called when the node enters the scene tree for the first time.
 ## Runs everything
 func _ready():
@@ -25,8 +27,6 @@ func _ready():
 	setup_grid()
 	show_path()
 	
-	
-
 ## Function for setting up the map grid coordinates
 func setup_grid():
 	
@@ -58,14 +58,6 @@ func show_path():
 	# From 0,0 -> 4,1
 	var path_taken = astar_grid.get_id_path(Vector2i(0,0), Vector2i(4, 1))
 	
-	
-	# For every cell that the path takes,
-	# Each tile gets colored, that of "var PATH_TAKEN_ATLAS_COORDS (brown)"
-	# And a timer is added, to show the flow of movement
-	for cell in target_position:
-		tile_map.set_cell(MAIN_LAYER, cell, MAIN_SOURCE, PATH_TAKEN_ATLAS_COORDS)
-		await get_tree().create_timer(.3).timeout
-	
 	## Function to check if the movement on MAIN_LAYER
 	## is SOLID, which is adjusted on TileSet options (custom data layers)
 func is_spot_solid(spot_to_check:Vector2i) -> bool:
@@ -85,7 +77,7 @@ func _input(event):
 	if is_moving:
 		id_path = astar_grid.get_id_path(
 			tile_map.local_to_map(target_position),
-			tile_map.local_to_map(get_global_mouse_position())
+			tile_map.local_to_map(get_global_mouse_position()),
 	)
 	else: 
 		id_path = astar_grid.get_id_path(
@@ -101,10 +93,12 @@ func _input(event):
 			tile_map.local_to_map(get_global_mouse_position())
 		)
 		
-		# TODO: Draw/Add boxes that update with chosen path as arrows
-		# possibly with path_taken in show_path():
-		for i in current_point_path.size():
-			current_point_path[i] = current_point_path[i] + Vector2(32, 24)
+	# For every cell that the path takes,
+	# Each tile gets colored, that of "var PATH_TAKEN_ATLAS_COORDS (brown)"
+	# And a timer is added, to show the flow of movement
+		for cell in id_path:
+			tile_map.set_cell(MAIN_LAYER, cell, MAIN_SOURCE, PATH_TAKEN_ATLAS_COORDS)
+		#await get_tree().create_timer(.1).timeout
 		
 		
 # Global function that does not need to be called upon in _ready
